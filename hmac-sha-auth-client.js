@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 1.0.0
+ * @version 2.0.0
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,13 +36,13 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "1.0.0";
+		HMACShaAuthCli.version = "2.0.0";
 
-		// Has to the same with https://github.com/philipbrown/signature-php
-		var server_version = "3.0.2"; 
+		// Has to be the same with https://github.com/philipbrown/signature-php
+		var server_version = "5.1.2"; 
 
 		// Main function, return your params with Auth Params included
-		HMACShaAuthCli.inludeAuthParams = function(user,passwd,url,method,params)
+		HMACShaAuthCli.includeAuthParams = function(user,passwd,url,method,params)
 		{
 			// Auth Params
 			var auth = {
@@ -51,7 +51,7 @@
 				auth_timestamp : Date.now() / 1000 | 0 // timestamp in seconds
 			};
 
-			var payload = makePayload(params);
+			var payload = makePayload(params,auth);
 			auth['auth_signature'] = makeSignature(payload, method, url, passwd);
 			deepExtend(params,auth);
 		}
@@ -62,10 +62,15 @@
 			return url+"?"+serialize(params);
 		}
 
-		var makePayload = function(params)
+		var makePayload = function(params,auth)
 		{
+			var payload = {};
+
+			// Merge params<->auth
+			deepExtend(payload,params,auth);
+
 			// To Lowercase
-			var payload = objectToLowerCase(params);
+			payload = objectToLowerCase(payload);
 
 			// Sort object keys
 			payload = sortObjectByKey(payload);

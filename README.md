@@ -13,17 +13,17 @@ bower install hmac-sha-auth-cli
 
 ## Usage
 
-After included, you can  easy prepare a request:
+After included, you can easy prepare a request:
 
 ```javascript
-HMACShaAuthCli.inludeAuthParams(user,password,resource,method,params);
+HMACShaAuthCli.includeAuthParams(user,password,resource,method,params);
 ```
 
 And the library will include the auth params into your params object. For example:
 
 ```javascript
 params = {name:"food"};
-HMACShaAuthCli.inludeAuthParams("admin","thisissecret","/categories","POST",params);
+HMACShaAuthCli.includeAuthParams("admin","thisissecret","/categories","POST",params);
 ```
 After the call, your params object will be like:
 ```javascript
@@ -36,7 +36,7 @@ Also, if you're calling with GET method, you can use an util function to include
 ```javascript
 params = {};
 resource = "/users";
-HMACShaAuthCli.inludeAuthParams("admin","thisissecret",resource,"GET",params);
+HMACShaAuthCli.includeAuthParams("admin","thisissecret",resource,"GET",params);
 resource = HMACShaAuthCli.addParamsToUrl(resource,params);
 // Now resource is like: /users?auth_version=3.0.2&auth_key=admin&auth_timestamp=1428145161&auth_signature=1cba9f2d945f452fb98f20f15ad56k80a4d9720bf024b5ac4bb544c1d6f0c6e5
 ```
