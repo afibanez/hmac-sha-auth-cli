@@ -56,6 +56,12 @@
 			deepExtend(params,auth);
 		}
 
+		// In 1.0.0 i done a typo error. For dont lose compatibility
+		HMACShaAuthCli.inludeAuthParams = function(user,passwd,url,method,params)
+		{
+			return HMACShaAuthCli.includeAuthParams(user,passwd,url,method,params);
+		}
+
 		// Util function, convert JS Object of params to URL GET format for GET petitions
 		HMACShaAuthCli.addParamsToUrl = function(url,params)
 		{
