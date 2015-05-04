@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 2.0.0
+ * @version 2.0.2
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,7 +36,7 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "2.0.0";
+		HMACShaAuthCli.version = "2.0.2";
 
 		// Has to be the same with https://github.com/philipbrown/signature-php
 		var server_version = "5.1.2"; 
