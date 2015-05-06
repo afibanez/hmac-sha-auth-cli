@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 2.0.2
+ * @version 2.0.3
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,7 +36,7 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "2.0.2";
+		HMACShaAuthCli.version = "2.0.3";
 
 		// Has to be the same with https://github.com/philipbrown/signature-php
 		var server_version = "5.1.2"; 
@@ -86,7 +86,7 @@
 
 
 		var makeSignature = function(payload, method, uri, secret){
-			payload = urldecode(build_query(payload));
+			payload = urldecode(http_build_query(payload));
 			payload = method+"\n"+uri+"\n"+payload;
 			var hmacbin = CryptoJS.HmacSHA256(payload, secret);
 			return CryptoJS.enc.Hex.stringify(hmacbin);
@@ -104,8 +104,9 @@
 
 				for (var key in obj) {
 					if (obj.hasOwnProperty(key)) {
-						if (typeof obj[key] === 'object')
-							deepExtend(out[key], obj[key]);
+						if (typeof obj[key] === 'object'){
+							out[key] = deepExtend(out[key], obj[key]);
+						}
 						else
 							out[key] = obj[key];
 					}
@@ -142,37 +143,52 @@
 			return newObj;
 		}
 
-		// https://gist.github.com/luk-/2722097
-		var build_query = function (obj, num_prefix, temp_key) {
 
-			var output_string = [];
-			Object.keys(obj).forEach(function (val) {
-				var key = val;
-				num_prefix && !isNaN(key) ? key = num_prefix + key : '';
+		// https://gist.github.com/lukelove/674274
+		var http_build_query = function (formdata, numeric_prefix, arg_separator){
+			var value, key, tmp = [], that = this;
 
-				var key = encodeURIComponent(key.replace(/[!'()*]/g, escape));
-				temp_key ? key = temp_key + '[' + key + ']' : '';
+			var urlencode = function (str) {
+				str = (str+'').toString();
+				return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
+			};
 
-				if (typeof obj[val] === 'object') {
-					var query = build_query(obj[val], null, key);
-					output_string.push(query);
+			var _http_build_query_helper = function (key, val, arg_separator) {
+				var k, tmp = [];
+				if (val === true) {
+					val = "1";
+				} else if (val === false) {
+					val = "0";
 				}
-
-				else {
-					var value = encodeURIComponent(obj[val].toString().replace(/[!'()*]/g, escape));
-
-					if (value === "true") {
-						value = "1";
-					} else if (value === "false") {
-						value = "0";
+				if (val !== null && typeof(val) === "object") {
+					for (k in val) {
+						if (val[k] !== null) {
+							tmp.push(_http_build_query_helper(key + "[" + k + "]", val[k], arg_separator));
+						}
 					}
-
-					output_string.push(key + '=' + value);
+					return tmp.join(arg_separator);
+				} else if (typeof(val) !== "function") {
+					return urlencode(key) + "=" + urlencode(val);
+				} else if (typeof(val) == "function") {
+								return '';
+				} else {
+					throw new Error('There was an error processing for http_build_query().');
 				}
-			})
-
-			return output_string.join('&');
-		}
+			};
+		 
+			if (!arg_separator) {
+				arg_separator = "&";
+			}
+			for (key in formdata) {
+				value = formdata[key];
+				if (numeric_prefix && !isNaN(key)) {
+					key = String(numeric_prefix) + key;
+				}
+				tmp.push(_http_build_query_helper(key, value, arg_separator));
+			}
+		 
+			return tmp.join(arg_separator);
+		};
 
 		var urldecode = function(str) {
 			//       discuss at: http://phpjs.org/functions/urldecode/
