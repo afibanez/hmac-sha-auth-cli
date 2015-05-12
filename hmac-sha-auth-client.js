@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 2.0.4
+ * @version 2.1.0
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,7 +36,8 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "2.0.4";
+		HMACShaAuthCli.version = "2.1.0";
+		HMACShaAuthCli.convertBooleans = true;
 
 		// Has to be the same with https://github.com/philipbrown/signature-php
 		var server_version = "5.1.2";
@@ -50,6 +51,10 @@
 				auth_key : user,
 				auth_timestamp : Date.now() / 1000 | 0 // timestamp in seconds
 			};
+
+			if (HMACShaAuthCli.convertBooleans){
+				boolToInt(params);
+			}
 
 			var payload = makePayload(params,auth);
 			auth['auth_signature'] = makeSignature(payload, method, url, passwd);
@@ -116,6 +121,24 @@
 			}
 
 			return out;
+		};
+
+		// Transforms javascript object, converting true to 1 and false to 0
+		var boolToInt = function(obj) {
+			obj = obj || {};
+
+			for (var key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					if (typeof obj[key] === 'object'){
+						obj[key] = boolToInt(obj[key]);
+					}
+					else if (typeof obj[key] === 'boolean') {
+						obj[key] = obj[key]?1:0;
+					}
+				}
+			}
+
+			return obj;
 		};
 
 		var objectToLowerCase = function(myObj)

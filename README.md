@@ -40,3 +40,9 @@ HMACShaAuthCli.includeAuthParams("admin","thisissecret",resource,"GET",params);
 resource = HMACShaAuthCli.addParamsToUrl(resource,params);
 // Now resource is like: /users?auth_version=3.0.2&auth_key=admin&auth_timestamp=1428145161&auth_signature=1cba9f2d945f452fb98f20f15ad56k80a4d9720bf024b5ac4bb544c1d6f0c6e5
 ```
+
+On a GET/POST/PUT/DELETE petition, PHP recieves booleans as strings, converting true to "true" and false to "false". So you can't use that param as a boolean directly. From version 2.1.0, that library converts your javascript booleans to 1 and 0, so you can use it in PHP as booleans directly.
+If you don't want this functionality, simply do:
+```javascript
+HMACShaAuthCli.convertBooleans = false;
+```
