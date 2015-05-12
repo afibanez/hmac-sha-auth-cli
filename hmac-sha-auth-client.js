@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 2.0.3
+ * @version 2.0.4
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,10 +36,10 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "2.0.3";
+		HMACShaAuthCli.version = "2.0.4";
 
 		// Has to be the same with https://github.com/philipbrown/signature-php
-		var server_version = "5.1.2"; 
+		var server_version = "5.1.2";
 
 		// Main function, return your params with Auth Params included
 		HMACShaAuthCli.includeAuthParams = function(user,passwd,url,method,params)
@@ -105,7 +105,9 @@
 				for (var key in obj) {
 					if (obj.hasOwnProperty(key)) {
 						if (typeof obj[key] === 'object'){
-							out[key] = deepExtend(out[key], obj[key]);
+							if (Object.keys(obj[key]).length > 0){ // Empty objects are not sent, so don't copy them #byAngel
+								out[key] = deepExtend(out[key], obj[key]);
+							}
 						}
 						else
 							out[key] = obj[key];
@@ -156,9 +158,9 @@
 			var _http_build_query_helper = function (key, val, arg_separator) {
 				var k, tmp = [];
 				if (val === true) {
-					val = "1";
+					val = "true"; // On GET/POST/PUT/DELETE, PHP converts boolean to string #byAngel
 				} else if (val === false) {
-					val = "0";
+					val = "false";
 				}
 				if (val !== null && typeof(val) === "object") {
 					for (k in val) {
