@@ -25,7 +25,7 @@
  *
  * See it at: https://github.com/afibanez/hmac-sha-auth-cli
  *
- * @version 2.1.1
+ * @version 2.1.2
  *
  * (c) 2015 Angel Fernández a.k.a afibanez <angelfernandezibanez@gmail.com>
  */
@@ -36,7 +36,7 @@
 	function define_hmacshaauthcli()
 	{
 		var HMACShaAuthCli = {};
-		HMACShaAuthCli.version = "2.1.1";
+		HMACShaAuthCli.version = "2.1.2";
 		HMACShaAuthCli.convertBooleans = true;
 
 		// Has to be the same with https://github.com/philipbrown/signature-php
@@ -200,7 +200,10 @@
 					}
 				} else if (typeof(val) === "number"){
 					// PHP http_build_query rounds number to 12 decimal positions #byAngel
-					return urlencode(key) + "=" + urlencode(Math.round(val * 1000000000000) / 1000000000000);
+					if ((val.toString().split('.')[1] || []).length > 12){
+						val = Math.round(val * 1000000000000) / 1000000000000;
+					}
+					return urlencode(key) + "=" + urlencode(val);
 				} else if (typeof(val) !== "function") {
 					return urlencode(key) + "=" + urlencode(val);
 				} else if (typeof(val) == "function") {

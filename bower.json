@@ -1,6 +1,6 @@
 {
   "name": "hmac-sha-auth-cli",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "homepage": "https://github.com/afibanez/hmac-sha-auth-cli",
   "authors": [
     "Angel Fernandez <angelfernandezibanez@gmail.com>"
